@@ -23,13 +23,13 @@ class Tag(models.Model):
 class Post(models.Model):
 
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, null=True, blank=True)
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='posts')
-    tags = models.ManyToManyField(Tag, related_name='posts')
+    tags = models.ManyToManyField(Tag, related_name='posts', null=True, blank=True)
     published = models.BooleanField(default=False)
 
     def __str__(self):
