@@ -6,16 +6,16 @@
 
 <div class="container mt-4">
     <div class="row">
-            {% for post  in posts %}
-            <div class="col-9">
-                <div class="card shadow-sm my-3">
+        {% for post  in posts %}
+        <div class="col-9">
+            <div class="card shadow-sm my-3">
                     <div class="card-body">
                         <h5 class="card-title">{{post.title}}</h5>
                         <h6 class="card-subtitle mb-2 text-muted small py-2">{{post.created_at}}</h6>
                         <p class="card-text py-3">
                             {{post.text}}
                         </p>
-                        <div class="btn btn-sm btn-success">Read More</div>
+                        <a href="{% url 'post_detail' post.id %}"><div class="btn btn-sm btn-success">Read More</div></a>
                     </div>
                 </div>
             </div>
