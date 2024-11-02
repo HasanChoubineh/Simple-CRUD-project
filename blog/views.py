@@ -40,5 +40,13 @@ def update_post_view(request, pk):
 
    return render(request, 'blog/add_post.html', context={'form': form})
 
+def delete_post(request, pk):
+   
+   post = get_object_or_404(Post, pk=pk)
+   if request.method == "POST":
+      post.delete()
+      return redirect('posts_list')
+   return render(request, 'blog/post_delete.html', context={'post':post})
+
 
    
