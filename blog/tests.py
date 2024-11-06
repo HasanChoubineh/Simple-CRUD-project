@@ -60,6 +60,40 @@ class BlogPostTest(TestCase):
         self.assertContains(response, self.post2.title)
         self.assertNotContains(response, self.post1.title)
 
+    def test_post_model_str(self):
+        post = self.post2
+        self.assertEqual(str(post), post.title)
+
+    
+    def test_post_detail(self):
+        self.assertEqual(self.post1.title, 'post1')
 
 
+    def test_post_create_view(self):
 
+        response = self.client.post(reverse('post_create'),
+                                    {
+                                        'title': "some title",
+                                        'text' : 'this is some text',
+                                        'published' : True,
+                                        'author' : self.user
+                                    })
+        # self.assertEqual(response.status_code, 302)
+        self.assertEqual(Post.objects.last().title, 'post2')
+
+
+    def test_post_update_view(self):
+
+        response = self.client.post(reverse('post_update', args = [self.post2.id]), {
+            'title' : 'updated post2',
+            'text' : "updated text of post2",
+            'published' : True,
+            'author' : self.user
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Post.objects.last().title, 'updated post2')
+
+    def test_delete_view(self):
+
+        response = self.client.post(reverse('post_delete', args=[self.post2.id]))
+        self.assertEqual(response.status_code, 302)
