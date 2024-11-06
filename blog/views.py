@@ -3,50 +3,79 @@ from .models import *
 from django.shortcuts import get_object_or_404
 from .forms import NewPostForm
 from django.shortcuts import redirect
+from django.views import generic
+from django.urls import reverse_lazy
 
-def posts_list_view(request):
+
+class PostListView(generic.ListView):
+
+   template_name = 'blog/posts_list.html'
+   context_object_name = 'posts'
+
+   def get_queryset(self):
+      return Post.objects.filter(published=True).order_by('-updated_at')
+
+# def posts_list_view(request):
     
-    posts = Post.objects.filter(published=True).order_by('-updated_at')
-    return render(request, 'blog/posts_list.html', context={'posts' : posts})
+#     posts = Post.objects.filter(published=True).order_by('-updated_at')
+#     return render(request, 'blog/posts_list.html', context={'posts' : posts})
 
+class PostDetailView(generic.DetailView):
 
-def post_detail_view(request,pk):
+   model = Post
+   template_name = 'blog/post_detail.html'
+   context_object_name = 'post'
 
-    post = get_object_or_404(Post, pk=pk)
-    return render(request, 'blog/post_detail.html', context={'post' : post})
+# def post_detail_view(request,pk):
 
-def create_post_view(request):
-    if request.method == "POST":
-      form = NewPostForm(request.POST)
-      if form.is_valid() : 
-         form.save()
-         form = NewPostForm()
-         return redirect('posts_list')
+#     post = get_object_or_404(Post, pk=pk)
+#     return render(request, 'blog/post_detail.html', context={'post' : post})
 
-    else : 
-      form = NewPostForm()
+class PostCreateView(generic.CreateView):
 
-    return render(request, 'blog/add_post.html', context={'form' : form})
+   form_class = NewPostForm
+   template_name = 'blog/add_post.html'
 
+# def create_post_view(request):
+#     if request.method == "POST":
+#       form = NewPostForm(request.POST)
+#       if form.is_valid() : 
+#          form.save()
+#          form = NewPostForm()
+#          return redirect('posts_list')
 
-def update_post_view(request, pk):
+#     else : 
+#       form = NewPostForm()
+
+#     return render(request, 'blog/add_post.html', context={'form' : form})
+
    
-   post = get_object_or_404(Post, pk=pk)
-   form = NewPostForm(request.POST or None, instance=post)
+class PostUpdateView(generic.UpdateView):
 
-   if form.is_valid():
-      form.save()
-      return redirect('post_detail', pk)
+   model = Post
+   form_class = NewPostForm
+   template_name = 'blog/add_post.html'
 
-   return render(request, 'blog/add_post.html', context={'form': form})
+# def update_post_view(request, pk):
+#    post = get_object_or_404(Post, pk=pk)
+#    form = NewPostForm(request.POST or None, instance=post)
+#    if form.is_valid():
+#       form.save()
+#       return redirect('post_detail', pk)
+#    return render(request, 'blog/add_post.html', context={'form': form})
 
-def delete_post(request, pk):
+class PostDeleteView(generic.DeleteView):
+
+   model = Post
+   template_name = 'blog/post_delete.html'
+   success_url = reverse_lazy('posts_list')
    
-   post = get_object_or_404(Post, pk=pk)
-   if request.method == "POST":
-      post.delete()
-      return redirect('posts_list')
-   return render(request, 'blog/post_delete.html', context={'post':post})
+# def delete_post(request, pk):
+#    post = get_object_or_404(Post, pk=pk)
+#    if request.method == "POST":
+#       post.delete()
+#       return redirect('posts_list')
+#    return render(request, 'blog/post_delete.html', context={'post':post})
 
 
    
